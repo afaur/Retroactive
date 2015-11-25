@@ -1,3 +1,14 @@
+<template name="layout">
+  {{> yield}}
+</template>
+
+<template name="notFound">
+</template>
+
+<template name="loading">
+  <h1>Loading...</h1>
+</template>
+
 <template name="autocomplete">
   {{#inputAutocomplete settings=settings id="autocomplete-input"
     class="form-control" placeholder="Type here..."
@@ -5,25 +16,30 @@
   {{/inputAutocomplete}}
 </template>
 
-<template name="largelayout">
+<template name="home">
+  {{> largeLayout}}
+</template>
+
+<template name="largeLayout">
   <div class="row">
     <div class="large-12 columns">
-        {{> autocomplete }}
-    <h1>Welcome to RETROActive</h1>
+      {{> autocomplete }}
+      <h1>Welcome to RETROActive</h1>
+      <h3 id="logout">logout/reset session</h3>
     </div>
   </div>
   <div class="row">
     <div class="canvas large-8 columns">
       <div class="row">
         <div class="timer large-12 columns">
-          <div class="callout"><h1>12:00 mins</h1></div>
+          <div class="callout"><h1>{{timer.timerstart}} mins</h1></div>
         </div>
       </div>
       <div class="row">
         <div class="ticket large-12 columns">
           <div class="callout primary">
-          <h3>Ticket Title</h3>
-          <p>Ticket Information Lipsum</p>
+            <h3>[{{current_issue.key}}] {{current_issue.summary}}</h3>
+            <p>{{current_issue.description}}</p>
           </div>
         </div>
       </div>
@@ -57,15 +73,11 @@
       </div>
     </div>
     <div class="sidebar large-4 columns">
-      <h1>bar</h1>
+      {{#each issues}}
+        <h3 id="issue_key" data-ticket-id={{_id}}>{{key}}</h3>
+      {{/each}}
     </div>
   </div>
-</template>
-
-<template name="home">
-
-    {{> largelayout}}
-
 </template>
 
 <template name="peoplePill">

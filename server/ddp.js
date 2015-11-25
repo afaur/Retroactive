@@ -7,8 +7,8 @@ Meteor.methods({
     var jira = new JiraClient( {
       host: 'vitals.atlassian.net',
       basic_auth: {
-        username: '',
-        password: ''
+        username: Meteor.settings.jira_username,
+        password: Meteor.settings.jira_password
       }
     });
 
@@ -27,4 +27,11 @@ Meteor.methods({
 
 });
 
+Meteor.publish('people', function () {
+  return People.find({});
+});
+
+Meteor.publish('jiraData', function () {
+  return JiraData.find({});
+});
 
