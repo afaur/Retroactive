@@ -2,3 +2,9 @@
 @import '{zurb:foundation-sites}/scss/foundation';
 
 @include foundation-everything;
+.canvas {
+	background: #eee;
+}
+.sidebar {
+	background: #333;
+}
