@@ -1,21 +1,3 @@
-<template name="layout">
-  {{> yield}}
-</template>
-
-<template name="notFound">
-</template>
-
-<template name="loading">
-  <h1>Loading...</h1>
-</template>
-
-<template name="autocomplete">
-  {{#inputAutocomplete settings=settings id="autocomplete-input"
-    class="form-control" placeholder="Type here..."
-    autofocus="autofocus"}}
-  {{/inputAutocomplete}}
-</template>
-
 <template name="home">
   {{> largeLayout}}
 </template>
@@ -24,15 +6,21 @@
   <div class="row">
     <div class="large-12 columns">
       {{> autocomplete }}
-      <h1>Welcome to RETROActive</h1>
-      <h3 id="logout">logout/reset session</h3>
+    </div>
+    <div class="large-12 columns">
+      <div class="large-8 columns">
+        <h1>Welcome to RETROActive</h1>
+      </div>
+      <div class="large-4 columns">
+        <h3 id="logout">Logout</h3>
+      </div>
     </div>
   </div>
   <div class="row">
     <div class="canvas large-8 columns">
       <div class="row">
         <div class="timer large-12 columns">
-          <div class="callout"><h1>{{timer.timerstart}} mins</h1></div>
+          <div class="callout"><h1>{{timer}}</h1></div>
         </div>
       </div>
       <div class="row">
@@ -43,44 +31,27 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="playerCard large-2 columns">
-          <div class="callout">Player Name</div>
-        </div>
-        <div class="playerCard large-2 columns">
-          <div class="callout">Player Name</div>
-        </div>
-        <div class="playerCard large-2 columns">
-          <div class="callout">Player Name</div>
-        </div>
-        <div class="playerCard large-2 columns">
-          <div class="callout">Player Name</div>
-        </div>
-        <div class="playerCard large-2 columns">
-          <div class="callout">Player Name</div>
-        </div>
-        <div class="playerCard large-2 columns">
-          <div class="callout">Player Name</div>
-        </div>
+      <div class="row playerCards">
+        {{#each playerCards}}
+          {{> playerCard name=name turned=turned display=display points=points}}
+        {{/each}}
       </div>
-      <div class="row">
-        <div class="pointCard large-2 columns"><div class="callout">1</div></div>
-        <div class="pointCard large-2 columns"><div class="callout">2</div></div>
-        <div class="pointCard large-2 columns"><div class="callout">3</div></div>
-        <div class="pointCard large-2 columns"><div class="callout">5</div></div>
-        <div class="pointCard large-2 columns"><div class="callout">8</div></div>
-        <div class="pointCard large-2 columns"><div class="callout">?</div></div>
+      <div class="row estimateCards">
+        {{#each estimateCards}}
+          {{> estimateCard points=points display=display}}
+        {{/each}}
       </div>
     </div>
     <div class="sidebar large-4 columns">
+      <ul>
       {{#each issues}}
-        <h3 id="issue_key" data-ticket-id={{_id}}>{{key}}</h3>
+        <li id="issue_key" data-ticket-id={{_id}}>
+          {{key}} 
+          <img src="{{priority.iconUrl}}" width="10" height="10">
+        </li>
       {{/each}}
+      </ul>
     </div>
   </div>
-</template>
-
-<template name="peoplePill">
-  {{name}} <small class="muted">({{_id}})</small>
 </template>
 

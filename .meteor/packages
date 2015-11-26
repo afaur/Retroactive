@@ -30,3 +30,5 @@ sanjo:jasmine
 velocity:html-reporter
 zurb:foundation-sites
 momentjs:moment
+alethes:lodash
+reactive-var

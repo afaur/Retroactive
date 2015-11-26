@@ -14,6 +14,57 @@ seedMockPeopleData = (callback) => {
   People._ensureIndex({name: 1});
 }
 
+applyFilterOnIssueKeys = (issue) => {
+  return _.extend(
+    _.pick(issue, 'key'),
+    _.pick(issue.fields,
+      'summary', 'description', 'created', 'updated',
+      'components', 'aggregatetimeestimate',
+      'aggregatetimeoriginalestimate', 'timeestimate',
+      'timeoriginalestimate', 'timespent', 'aggregatetimespent',
+      'creator', 'reporter', 'assignee',
+      'issuetype', 'priority', 'status')
+  );
+}
+
+applyRankFromIssuePriority = (issue_priority) => {
+  return _.transform(
+    _.pick(issue_priority, 'name'),
+    (result, n, key) => {
+      let rank_val = 0;
+      switch(n) {
+        case "Blocker":
+          rank_val = 10;
+          break;
+        case "Critical":
+          rank_val = 9;
+          break;
+        case "Major":
+          rank_val = 8;
+          break;
+        case "High":
+          rank_val = 7;
+          break;
+        case "Medium":
+          rank_val = 6;
+          break;
+        case "Low":
+          rank_val = 5;
+          break;
+        case "Minor":
+          rank_val = 4;
+          break;
+        case "Trivial":
+          rank_val = 3;
+          break;
+        default:
+          rank_val = 1;
+      }
+      result['rank'] = rank_val;
+    }
+  );
+}
+
 seedJiraData = (callback) => {
 
   //JiraData.remove({});
@@ -47,15 +98,15 @@ seedJiraData = (callback) => {
     // Collect only the keys we want to persist
     var final_data = _.map(raw_data, (issue) => {
       return _.extend(
-        _.pick(issue, 'key'),
-        _.pick(issue.fields,
-          'summary', 'description', 'created', 'updated',
-          'components', 'aggregatetimeestimate',
-          'aggregatetimeoriginalestimate', 'timeestimate',
-          'timeoriginalestimate', 'timespent', 'aggregatetimespent',
-          'creator', 'reporter', 'assignee',
-          'issuetype', 'priority', 'status'
-      ));
+        // Gauge priority and add a rank property to issues based on it.
+        applyRankFromIssuePriority(
+          issue.fields.priority
+        ),
+        // Filter out keys we don't want from the jira api
+        applyFilterOnIssueKeys(
+          issue
+        )
+      );
     });
 
     // Store our issue data
@@ -63,7 +114,9 @@ seedJiraData = (callback) => {
       JiraData.insert(issue);
     });
 
+    // Setup some indexes for faster searching
     JiraData._ensureIndex({_id: 1});
+    JiraData._ensureIndex({id: 1});
     JiraData._ensureIndex({key: 1});
 
   }

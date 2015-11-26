@@ -2,9 +2,111 @@
 @import '{zurb:foundation-sites}/scss/foundation';
 
 @include foundation-everything;
+
+// Give callouts even top and bottom margin
+.callout {
+  margin: 1rem 0 1rem 0;
+}
+
 .canvas {
-	background: #eee;
+  background: #eee;
 }
+
 .sidebar {
-	background: #333;
+  background: #bbb;
+  overflow-y:scroll;
+  height:623px;
 }
+
+#issue_key {
+  cursor: pointer;
+}
+
+#logout {
+  cursor: pointer;
+}
+
+.playerCards {
+  margin: 1rem 0 1rem 0;
+  height: 180px;
+}
+
+.estimateCards {
+  margin: 1rem 0 1rem 0;
+  height: 140px;
+}
+
+.card-wrap {
+  float: left;
+  margin-left: 8px;
+  margin-right: 8px;
+  position: relative;
+  width: 80px;
+  height: 120px;
+  z-index: 1;
+}
+
+.card-contain {
+  width: 80px;
+  height: 120px;
+  border-radius: 16px;
+}
+
+.card {
+  -webkit-border-radius: 10px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 10px;
+  -moz-background-clip: padding;
+  border-radius: 16px;
+  background-clip: padding-box;
+  text-align: center;
+  width: 80px;
+  height: 120px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  font-family: 'robotobold', sans-serif;
+  font-weight: normal;
+  color: #fff;
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  -webkit-transition: -webkit-transform 100ms ease-in-out;
+  transition: -webkit-transform 100ms ease-in-out,-moz-transform 100ms ease-in-out,-o-transform 100ms ease-in-out,transform 100ms ease-in-out;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.card-purple .card-face {
+  background-color: #614470;
+  border: 2px solid #452458;
+}
+
+.card-purple .card-face .hover {
+  background-color: #614470;
+}
+
+.card-face {
+  cursor: pointer;
+  font-size: 68px;
+  position: relative;
+  padding-top: 5px;
+}
+
+.card-back {
+  cursor: pointer;
+  font-size: 12px;
+  position: relative;
+  padding-top: 65px;
+}
+
+.card-label {
+  position: absolute;
+  padding-top: 125px;
+  color: black;
+}
+

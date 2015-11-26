@@ -1,0 +1,37 @@
+<template name="estimateCard">
+  <div class="estimateCard large-2 columns">
+    <div class="card-wrap pers-wrap">
+      <div class="anim-wrap">
+        <div class="card-contents rotate face-up card-purple">
+          <div class="card card-face">
+            <div class="text-center">
+              <span data-points={{points}}>{{display}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="playerCard">
+  <div class="playerCard large-2 columns">
+    <div class="card-wrap pers-wrap">
+      <div class="anim-wrap">
+        <div class="card-contents rotate face-{{turned}} card-purple">
+          <div class="card card-label">
+            <div class="text-center">
+              <span>{{name}}</span>
+            </div>
+          </div>
+          <div class="card card-face">
+            <div class="text-center">
+              <span data-points={{points}}>{{display}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
