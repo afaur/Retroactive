@@ -5,14 +5,11 @@
 <template name="largeLayout">
   <div class="row">
     <div class="large-12 columns">
-      {{> autocomplete }}
-    </div>
-    <div class="large-12 columns">
       <div class="large-8 columns">
         <h1>Welcome to RETROActive</h1>
       </div>
-      <div class="large-4 columns">
-        <h3 id="logout">Logout</h3>
+      <div class="user-actions large-4 columns">
+        <h1 id="logout">Logout</h1>
       </div>
     </div>
   </div>
@@ -27,7 +24,7 @@
         <div class="ticket large-12 columns">
           <div class="callout primary">
             <h3>[{{current_issue.key}}] {{current_issue.summary}}</h3>
-            <p>{{current_issue.description}}</p>
+            {{#markdown}}{{current_issue.description}}{{/markdown}}
           </div>
         </div>
       </div>

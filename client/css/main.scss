@@ -5,11 +5,37 @@
 
 // Give callouts even top and bottom margin
 .callout {
-  margin: 1rem 0 1rem 0;
+  margin: 0.2rem 0 0.2rem 0;
+  padding: 0.2rem;
 }
 
 .canvas {
   background: #eee;
+}
+
+.user-actions {
+  h1 {
+    float: right;
+    font-weight: 200;
+  }
+}
+
+.ticket {
+  overflow-x: scroll;
+  overflow-y: scroll;
+  height: 225px;
+  h1 {
+    font-weight: 800;
+    font-size: 1rem;
+  }
+  h2 {
+    font-weight: 800;
+    font-size: 1rem;
+  }
+  h3 {
+    font-weight: 800;
+    font-size: 1rem;
+  }
 }
 
 .sidebar {
@@ -28,12 +54,12 @@
 
 .playerCards {
   margin: 1rem 0 1rem 0;
-  height: 180px;
+  height: 165px;
 }
 
 .estimateCards {
   margin: 1rem 0 1rem 0;
-  height: 140px;
+  height: 110px;
 }
 
 .card-wrap {
