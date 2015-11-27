@@ -1,3 +1,42 @@
+updateIssueTime = (issue_id, init_option) => {
+
+  let alreadyExists = Action.find({
+    'type': 'issue_change',
+    'issue_id': issue_id
+  }).fetch();
+
+  if (alreadyExists.length > 0) {
+
+    if (init_option === false) {
+      var duration = alreadyExists[0]['duration_in_sec'];
+    } else {
+      var delta    = Math.ceil(((new Date().getTime()) -  alreadyExists[0]['started_on']) / 1000);
+      var duration = alreadyExists[0]['duration_in_sec'] + delta;
+    }
+
+    Action.upsert({
+      'type': 'issue_change',
+      'issue_id': issue_id
+    }, {
+      $set: {
+        'started_on': new Date().getTime(),
+        'duration_in_sec': duration
+      }
+    });
+
+  } else {
+
+    Action.insert({
+      'type': 'issue_change',
+      'issue_id': issue_id,
+      'started_on': new Date().getTime(),
+      'duration_in_sec': 0
+    });
+
+  }
+
+}
+
 Meteor.methods({
 
   getJiraResults() {
@@ -25,18 +64,13 @@ Meteor.methods({
 
   },
 
+  changeFromExistingIssue(old_issue_id, issue_id) {
+    updateIssueTime(old_issue_id, true);
+    updateIssueTime(issue_id, false);
+  },
+
   changeIssue(issue_id) {
-    Action.upsert({
-      'type': 'issue_change',
-      'issue_id': issue_id
-    }, {
-      $setOnInsert: {
-        'created_on': new Date().getTime()
-      },
-      $set: {
-        'updated_on': new Date().getTime()
-      }
-    });
+    updateIssueTime(issue_id, true);
   }
 
 });

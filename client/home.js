@@ -31,10 +31,10 @@ updateTimer = () => {
   timerValue.set('' + minExtra + min + ':' + secExtra + sec);
 }
 
-issueChangeDelta = (created_on) => {
+issueChangeDelta = (started_on, duration_in_sec) => {
   let current_time_unix_timestamp = parseInt(moment().utc().format('x'),10);
-  let modified_time_unix_timestamp = created_on;
-  let time_diff = (current_time_unix_timestamp - modified_time_unix_timestamp) / 1000;
+  let modified_time_unix_timestamp = started_on;
+  let time_diff = ((current_time_unix_timestamp - modified_time_unix_timestamp) / 1000) + duration_in_sec;
   let time_diff_min = Math.floor(time_diff / 60);
   let time_diff_sec = Math.ceil(time_diff) - (time_diff_min * 60);
   let minExtra = '';
@@ -44,12 +44,12 @@ issueChangeDelta = (created_on) => {
   return '' + minExtra + time_diff_min + ':' + secExtra + time_diff_sec;
 }
 
-changeIssue = (issue_id, created_on) => {
+changeIssue = (issue_id, started_on, duration_in_sec) => {
   if (timerInterval !== undefined) {
     Meteor.clearInterval(timerInterval);
   }
   timerValue.set(
-    issueChangeDelta(created_on)
+    issueChangeDelta(started_on, duration_in_sec)
   );
   Session.set('current_issue', issue_id);
   timerInterval = Meteor.setInterval(updateTimer, 1000);
@@ -63,13 +63,14 @@ monitorIssueChange = () => {
     'type': 'issue_change'
   }, {
     'sort': {
-      'updated_on': -1
+      'started_on': -1
     }
   });
   if (jsonData) {
     changeIssue(
       jsonData['issue_id'],
-      jsonData['created_on']
+      jsonData['started_on'],
+      jsonData['duration_in_sec']
     );
   }
 }
@@ -99,11 +100,22 @@ currentIssue = () => {
 Template.largeLayout.events({
   "click li#issue_key": (event) => {
     if (access) {
+
       let issue_id = $(event.target).data( "issueId" );
-      Meteor.call(
-        'changeIssue',
-        issue_id
-      );
+
+      if (Session.get('current_issue') !== undefined) {
+        Meteor.call(
+          'changeFromExistingIssue',
+          Session.get('current_issue'),
+          issue_id
+        );
+      } else {
+        Meteor.call(
+          'changeIssue',
+          issue_id
+        );
+      }
+
     } else {
       alert('Only the admin can do this.');
     }
