@@ -1,6 +1,7 @@
 Meteor.startup( () => {
   seedMockPeopleData();
   seedJiraData();
+  Action.remove({});
 });
 
 seedMockPeopleData = (callback) => {

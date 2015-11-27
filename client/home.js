@@ -1,10 +1,20 @@
-// Timer variables
-var timerValue = new ReactiveVar('00:00');
-var timerInterval;
-
 getJiraResults = (callback) => {
   Meteor.call('getJiraResults', callback);
 }
+
+var access = false;
+
+changeAccess = (level) => {
+  if (level = 'admin') {
+    access = true;
+  } else {
+    access = false;
+  }
+}
+
+// Timer variables
+var timerValue = new ReactiveVar('00:00');
+var timerInterval;
 
 updateTimer = () => {
   var tempTimer = timerValue.get();
@@ -21,9 +31,57 @@ updateTimer = () => {
   timerValue.set('' + minExtra + min + ':' + secExtra + sec);
 }
 
-startTimer = () => {
+issueChangeDelta = (created_on) => {
+  let current_time_unix_timestamp = parseInt(moment().utc().format('x'),10);
+  let modified_time_unix_timestamp = created_on;
+  let time_diff = (current_time_unix_timestamp - modified_time_unix_timestamp) / 1000;
+  let time_diff_min = Math.floor(time_diff / 60);
+  let time_diff_sec = Math.ceil(time_diff) - (time_diff_min * 60);
+  let minExtra = '';
+  let secExtra = '';
+  if (time_diff_min < 10) { minExtra = '0'; }
+  if (time_diff_sec < 10) { secExtra = '0'; }
+  return '' + minExtra + time_diff_min + ':' + secExtra + time_diff_sec;
+}
+
+changeIssue = (issue_id, created_on) => {
+  if (timerInterval !== undefined) {
+    Meteor.clearInterval(timerInterval);
+  }
+  timerValue.set(
+    issueChangeDelta(created_on)
+  );
+  Session.set('current_issue', issue_id);
   timerInterval = Meteor.setInterval(updateTimer, 1000);
 }
+
+// Watchers
+
+monitorIssueChange = () => {
+  // When an admin changes active ticket change with them.
+  jsonData = Action.findOne({
+    'type': 'issue_change'
+  }, {
+    'sort': {
+      'updated_on': -1
+    }
+  });
+  if (jsonData) {
+    changeIssue(
+      jsonData['issue_id'],
+      jsonData['created_on']
+    );
+  }
+}
+
+Action.find().observeChanges({
+  added: function() {
+    monitorIssueChange();
+  },
+  changed: function() {
+    monitorIssueChange();
+  }
+});
 
 currentIssue = () => {
   var current_issue_id = Session.get('current_issue');
@@ -38,34 +96,17 @@ currentIssue = () => {
   }
 }
 
-Template.autocomplete.helpers({
-  settings() {
-    return {
-      position: "bottom",
-      limit: 15,
-      rules: [
-        {
-          token: '@',
-          collection: 'People',
-          field: 'name',
-          //filter: { type: "autocomplete" },
-          options: '',
-          template: Template.peoplePill
-        }
-      ]
-    };
-  }
-});
-
 Template.largeLayout.events({
   "click li#issue_key": (event) => {
-    if (timerInterval !== undefined) {
-      Meteor.clearInterval(timerInterval);
-      timerValue.set('00:00');
+    if (access) {
+      let issue_id = $(event.target).data( "issueId" );
+      Meteor.call(
+        'changeIssue',
+        issue_id
+      );
+    } else {
+      alert('Only the admin can do this.');
     }
-    var ticket_id = $(event.target).data( "ticketId" );
-    Session.set('current_issue', ticket_id);
-    startTimer();
   },
   "click h3#logout": (event) => {
     Session.set('current_issue', undefined);
