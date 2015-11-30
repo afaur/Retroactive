@@ -1,28 +1,31 @@
 <template name="home">
-  {{> largeLayout}}
-</template>
-
-<template name="largeLayout">
   <div class="row">
     <div class="large-12 columns">
       <div class="large-8 columns">
         <h1>Welcome to RETROActive</h1>
       </div>
       <div class="user-actions large-4 columns">
-        <h1 id="logout">Logout</h1>
+        {{> loginButtons}}
       </div>
     </div>
   </div>
   <div class="row">
     <div class="canvas large-8 columns">
       <div class="row">
-        <div class="timer large-12 columns">
-          <div class="callout"><h1>{{timer}}</h1></div>
+        <div class="large-12 columns">
+          <div class="callout large-12 columns">
+            <div class="large-6 columns">
+              <h1>Timer: {{timer}}</h1>
+            </div>
+            <div class="large-6 columns">
+              <a href="#" class="become-organizer-btn button radius">Become Organizer</a>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row">
         <div class="ticket large-12 columns">
-          <div class="callout primary">
+          <div class="ticket-callout callout primary">
             <h3>[{{current_issue.key}}] {{current_issue.summary}}</h3>
             {{#markdown}}{{current_issue.description}}{{/markdown}}
           </div>

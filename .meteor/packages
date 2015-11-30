@@ -16,7 +16,6 @@ standard-minifiers      # JS/CSS minifiers run for production mode
 es5-shim                # ECMAScript 5 compatibility for older browsers.
 ecmascript              # Enable ECMAScript2015+ syntax in app code
 
-autopublish             # Publish all data to the clients (for prototyping)
 insecure                # Allow all DB writes from clients (for prototyping)
 iron:router
 ccorcos:tracker-streams
@@ -30,6 +29,13 @@ sanjo:jasmine
 velocity:html-reporter
 zurb:foundation-sites
 momentjs:moment
-alethes:lodash
 reactive-var
 chuangbo:marked
+erasaur:meteor-lodash
+accounts-password
+accounts-github
+useraccounts:core
+useraccounts:foundation
+useraccounts:iron-routing
+accounts-ui
+3stack:presence

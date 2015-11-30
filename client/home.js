@@ -1,3 +1,7 @@
+//Accounts.ui.config({
+//  passwordSignupFields: "EMAIL_ONLY"
+//});
+
 getJiraResults = (callback) => {
   Meteor.call('getJiraResults', callback);
 }
@@ -97,7 +101,13 @@ currentIssue = () => {
   }
 }
 
-Template.largeLayout.events({
+Template.home.events({
+  "click #login-buttons": (event) => {
+    if ($(".login-close-text").length > 0) {
+      event.preventDefault();
+      $(".login-close-text").trigger('click');
+    }
+  },
   "click li#issue_key": (event) => {
     if (access) {
 
@@ -125,17 +135,39 @@ Template.largeLayout.events({
   }
 });
 
-Template.largeLayout.helpers({
+Template.home.helpers({
   timer() { return timerValue.get(); },
   current_issue() { return currentIssue(); },
-  playerCards() { return [
-      {name: "Joe",    turned: 'down', display: '1', points: 1},
-      {name: "John",   turned: 'down', display: '1', points: 1},
-      {name: "James",  turned: 'down', display: '1', points: 1},
-      {name: "Jack",   turned: 'down', display: '1', points: 1},
-      {name: "Jan",    turned: 'down', display: '1', points: 1},
-      {name: "Jane",   turned: 'down', display: '1', points: 1},
-    ];
+  users_name() { return Meteor.user()['profile']['name']; },
+  people_here() { return presences.find(); },
+  playerCards() {
+    var IdsHere   = presences.find().fetch();
+    var cardsHere = _.map(IdsHere, (person) => {
+      return {
+        name: Meteor.users.find({"_id": person['userId']}).fetch()[0]['profile']['name'],
+        turned: 'down',
+        display: '',
+        points: 0
+      };
+    });
+    var myCard = {
+      name: Meteor.user()['profile']['name'],
+      turned: 'down',
+      display: '',
+      points: 0
+    };
+    cardsHere.push(myCard);
+
+    return cardsHere;
+      /*
+        {name: "empty",    turned: 'down', display: '', points: 0},
+        {name: "Joe",    turned: 'down', display: '1', points: 1},
+        {name: "John",   turned: 'down', display: '1', points: 1},
+        {name: "James",  turned: 'down', display: '1', points: 1},
+        {name: "Jack",   turned: 'down', display: '1', points: 1},
+        {name: "Jan",    turned: 'down', display: '1', points: 1},
+        {name: "Jane",   turned: 'down', display: '1', points: 1},
+      */
   },
   estimateCards() { return [
       {display: '1', points: 1},
