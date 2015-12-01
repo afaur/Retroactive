@@ -5,7 +5,7 @@
         <h1>Welcome to RETROActive</h1>
       </div>
       <div class="user-actions large-4 columns">
-        {{> loginButtons}}
+        <h1>{{users_name}}  |  <a href="/logout">Logout</a></h1>
       </div>
     </div>
   </div>
@@ -18,7 +18,7 @@
               <h1>Timer: {{timer}}</h1>
             </div>
             <div class="large-6 columns">
-              <a href="#" class="become-organizer-btn button radius">Become Organizer</a>
+              <h1>Estimate Result: {{estimate}}</h1>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
       </div>
       <div class="row playerCards">
         {{#each playerCards}}
-          {{> playerCard name=name turned=turned display=display points=points}}
+          {{> playerCard name=name turned=turned points=points}}
         {{/each}}
       </div>
       <div class="row estimateCards">

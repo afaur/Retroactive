@@ -1,7 +1,3 @@
-//Accounts.ui.config({
-//  passwordSignupFields: "EMAIL_ONLY"
-//});
-
 getJiraResults = (callback) => {
   Meteor.call('getJiraResults', callback);
 }
@@ -135,48 +131,101 @@ Template.home.events({
   }
 });
 
+// Player card points
+var playerCardPoints = new ReactiveVar({});
+
+getPlayerCardPoints = (playerId) => {
+  var playersPoints = playerCardPoints.get();
+  if (playersPoints.hasOwnProperty(playerId)) {
+    return playersPoints[playerId];
+  } else {
+    return -1;
+  }
+};
+
+savePlayerCardPoints = (points) => {
+  var playersPoints = playerCardPoints.get();
+  playersPoints[Meteor.userId()] = points;
+  playerCardPoints.set( playersPoints );
+};
+
+getCommonNumber = (store) => {
+  var frequency = {};  // array of frequency.
+  var max = 0;  // holds the max frequency.
+  var result;   // holds the max frequency element.
+  for(var v in store) {
+    frequency[store[v]]=(frequency[store[v]] || 0)+1; // increment frequency.
+    if(frequency[store[v]] > max) { // is this frequency > max so far ?
+      max = frequency[store[v]];  // update max.
+      result = store[v];          // update result.
+    }
+  }
+  return result;
+};
+
+collectPoints = () => {
+  var playersPoints = playerCardPoints.get();
+  var collection = [];
+  for (var key in playersPoints) {
+    if (playersPoints.hasOwnProperty(key)) {
+      collection.push(playersPoints[key]);
+    }
+  }
+  return collection;
+};
+
+getFinalEstimate = () => {
+  var collection = collectPoints();
+  if (readyToFlip()) {
+    return getCommonNumber(collection);
+  } else {
+    return '?';
+  }
+};
+
+readyToFlip = () => {
+  var collection = collectPoints();
+  if (collection.indexOf(-1) === -1 && collection.length > 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+
 Template.home.helpers({
   timer() { return timerValue.get(); },
   current_issue() { return currentIssue(); },
   users_name() { return Meteor.user()['profile']['name']; },
   people_here() { return presences.find(); },
+  estimate() {
+    return getFinalEstimate();
+  },
   playerCards() {
     var IdsHere   = presences.find().fetch();
     var cardsHere = _.map(IdsHere, (person) => {
       return {
         name: Meteor.users.find({"_id": person['userId']}).fetch()[0]['profile']['name'],
-        turned: 'down',
-        display: '',
-        points: 0
+        turned: (readyToFlip() === true ? 'up':'down'),
+        points: getPlayerCardPoints(person['userId'])
       };
     });
     var myCard = {
       name: Meteor.user()['profile']['name'],
-      turned: 'down',
-      display: '',
-      points: 0
+      turned: (readyToFlip() === true ? 'up':'down'),
+      points: getPlayerCardPoints(Meteor.userId())
     };
     cardsHere.push(myCard);
 
     return cardsHere;
-      /*
-        {name: "empty",    turned: 'down', display: '', points: 0},
-        {name: "Joe",    turned: 'down', display: '1', points: 1},
-        {name: "John",   turned: 'down', display: '1', points: 1},
-        {name: "James",  turned: 'down', display: '1', points: 1},
-        {name: "Jack",   turned: 'down', display: '1', points: 1},
-        {name: "Jan",    turned: 'down', display: '1', points: 1},
-        {name: "Jane",   turned: 'down', display: '1', points: 1},
-      */
   },
-  estimateCards() { return [
-      {display: '1', points: 1},
-      {display: '2', points: 2},
-      {display: '3', points: 3},
-      {display: '5', points: 5},
-      {display: '8', points: 8},
-      {display: '?', points: 0},
-    ];
+  estimateCards() {
+    var seq = [1,2,3,5,8,'?'];
+    return _.map(seq, (value) => {
+      var points = value;
+      if (value === '?') { points = 0; }
+      return {display: ''+value, points: points};
+    });
   }
 });
 

@@ -26,7 +26,9 @@
           </div>
           <div class="card card-face">
             <div class="text-center">
-              <span data-points={{points}}>{{display}}</span>
+              {{#if turnedIsUp}}
+              <span data-points={{points}}>{{points}}</span>
+              {{/if}}
             </div>
           </div>
         </div>
